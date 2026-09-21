@@ -266,7 +266,7 @@ internal class SubsonicApiImpl(
         maxSimilar: Int,
         includeNotPresent: Boolean
     ): ArtistInfo {
-        return getBody("getArtistInfo") {
+        return getBody("getArtistInfo2") {
             parameter("id", id)
             parameter("count", maxSimilar)
             parameter("includeNotPresent", includeNotPresent)
