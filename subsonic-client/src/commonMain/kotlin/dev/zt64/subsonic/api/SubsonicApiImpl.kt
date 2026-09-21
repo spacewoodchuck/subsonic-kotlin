@@ -288,12 +288,14 @@ internal class SubsonicApiImpl(
     override suspend fun getSimilarSongs(id: String, count: Int): List<Song> {
         return getBody("getSimilarSongs") {
             parameter("id", id)
+            parameter("count", count)
         }
     }
 
     override suspend fun getSimilarSongsID3(id: String, count: Int): List<Song> {
         return getBody("getSimilarSongs2") {
             parameter("id", id)
+            parameter("count", count)
         }
     }
 
