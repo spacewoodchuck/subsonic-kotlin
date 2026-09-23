@@ -3,6 +3,7 @@ package dev.zt64.subsonic.client.test
 import dev.zt64.subsonic.api.model.AlbumListType
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class AlbumTest {
     @Test
@@ -157,5 +158,35 @@ class AlbumTest {
         ) {
             getAlbums(AlbumListType.Random)
         }
+    }
+
+    @Test
+    fun testGetAlbumWithPartialReleaseDate() = runTest {
+        // OpenSubsonic release dates may be just a year, or year and month; servers omit the
+        // missing components entirely (e.g. Navidrome sends {"year": 1997}).
+        val album = testEndpoint(
+            endpoint = "getAlbum",
+            response = """
+                "album": {
+                  "id": "200000022",
+                  "name": "Year Only",
+                  "artist": "Comfort Fit",
+                  "songCount": 1,
+                  "duration": 100,
+                  "created": "2021-07-22T02:09:31+00:00",
+                  "releaseDate": { "year": 1997 },
+                  "originalReleaseDate": { "year": 1996, "month": 6 }
+                }
+            """.trimIndent()
+        ) {
+            getAlbum("200000022")
+        }
+
+        assertEquals(1997, album?.releaseDate?.year)
+        assertEquals(null, album?.releaseDate?.month)
+        assertEquals(null, album?.releaseDate?.day)
+        assertEquals(1996, album?.originalReleaseDate?.year)
+        assertEquals(6, album?.originalReleaseDate?.month)
+        assertEquals(null, album?.originalReleaseDate?.day)
     }
 }
